@@ -21,13 +21,36 @@ const ExpoSecureStoreAdapter = {
   },
 };
 
+// Create a custom storage object that works for both web and native
+const createCustomStorage = () => {
+  if (Platform.OS === 'web') {
+    // Use localStorage for web
+    return {
+      getItem: (key: string): Promise<string | null> => {
+        return Promise.resolve(localStorage.getItem(key));
+      },
+      setItem: (key: string, value: string): Promise<void> => {
+        localStorage.setItem(key, value);
+        return Promise.resolve();
+      },
+      removeItem: (key: string): Promise<void> => {
+        localStorage.removeItem(key);
+        return Promise.resolve();
+      },
+    };
+  } else {
+    // Use SecureStore for native platforms
+    return ExpoSecureStoreAdapter;
+  }
+};
+
 // Create Supabase client
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
-    storage: Platform.OS !== 'web' ? ExpoSecureStoreAdapter : localStorage,
+    storage: createCustomStorage(),
     autoRefreshToken: true,
     persistSession: true,
-    detectSessionInUrl: false,
+    detectSessionInUrl: Platform.OS === 'web',
   },
 });
 

@@ -45,7 +45,8 @@
     "expo-location": "latest",
     "react-native-dotenv": "latest",
     "@expo-google-fonts/inter": "latest",
-    "@expo-google-fonts/space-grotesk": "latest"
+    "@expo-google-fonts/space-grotesk": "latest",
+    "expo-secure-store": "latest"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
