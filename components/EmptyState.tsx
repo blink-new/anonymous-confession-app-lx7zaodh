@@ -1,24 +1,36 @@
 
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import Animated, { FadeIn } from 'react-native-reanimated';
-import { Ghost } from 'lucide-react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { MaskIcon } from './MaskIcon';
 
 type EmptyStateProps = {
   message: string;
   subMessage?: string;
+  actionLabel?: string;
+  onAction?: () => void;
 };
 
-export function EmptyState({ message, subMessage }: EmptyStateProps) {
+export function EmptyState({ message, subMessage, actionLabel, onAction }: EmptyStateProps) {
   return (
-    <Animated.View 
-      style={styles.container}
-      entering={FadeIn.duration(400)}
-    >
-      <Ghost size={48} color="#9775fa" />
+    <View style={styles.container}>
+      <MaskIcon size={64} color="#2D2D3F" />
+      
       <Text style={styles.message}>{message}</Text>
-      {subMessage && <Text style={styles.subMessage}>{subMessage}</Text>}
-    </Animated.View>
+      
+      {subMessage && (
+        <Text style={styles.subMessage}>{subMessage}</Text>
+      )}
+      
+      {actionLabel && onAction && (
+        <TouchableOpacity 
+          style={styles.actionButton}
+          onPress={onAction}
+          activeOpacity={0.8}
+        >
+          <Text style={styles.actionButtonText}>{actionLabel}</Text>
+        </TouchableOpacity>
+      )}
+    </View>
   );
 }
 
@@ -33,15 +45,28 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '600',
     color: '#E2E8F0',
-    textAlign: 'center',
     marginTop: 16,
+    marginBottom: 8,
+    textAlign: 'center',
     fontFamily: 'SpaceGrotesk_600SemiBold',
   },
   subMessage: {
     fontSize: 14,
     color: '#94A3B8',
     textAlign: 'center',
-    marginTop: 8,
+    marginBottom: 24,
     fontFamily: 'Inter_400Regular',
+  },
+  actionButton: {
+    backgroundColor: '#9775fa',
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 8,
+  },
+  actionButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '500',
+    fontFamily: 'Inter_500Medium',
   },
 });

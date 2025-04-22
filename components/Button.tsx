@@ -5,46 +5,30 @@ import {
   Text, 
   StyleSheet, 
   ActivityIndicator,
-  TouchableOpacityProps,
+  StyleProp,
   ViewStyle,
-  TextStyle,
+  TextStyle
 } from 'react-native';
-import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 
-const AnimatedTouchable = Animated.createAnimatedComponent(TouchableOpacity);
-
-interface ButtonProps extends TouchableOpacityProps {
+type ButtonProps = {
   title: string;
+  onPress: () => void;
   variant?: 'primary' | 'secondary' | 'outline';
   loading?: boolean;
-  style?: ViewStyle;
-  textStyle?: TextStyle;
-}
+  disabled?: boolean;
+  style?: StyleProp<ViewStyle>;
+  textStyle?: StyleProp<TextStyle>;
+};
 
 export function Button({ 
   title, 
+  onPress, 
   variant = 'primary', 
-  loading = false, 
-  style, 
-  textStyle,
-  ...props 
+  loading = false,
+  disabled = false,
+  style,
+  textStyle
 }: ButtonProps) {
-  const scale = useSharedValue(1);
-  
-  const animatedStyle = useAnimatedStyle(() => {
-    return {
-      transform: [{ scale: scale.value }],
-    };
-  });
-
-  const handlePressIn = () => {
-    scale.value = withSpring(0.98);
-  };
-
-  const handlePressOut = () => {
-    scale.value = withSpring(1);
-  };
-
   const getButtonStyle = () => {
     switch (variant) {
       case 'secondary':
@@ -58,40 +42,38 @@ export function Button({
 
   const getTextStyle = () => {
     switch (variant) {
-      case 'secondary':
-        return styles.secondaryText;
       case 'outline':
-        return styles.outlineText;
+        return styles.outlineButtonText;
       default:
-        return styles.primaryText;
+        return styles.buttonText;
     }
   };
 
   return (
-    <AnimatedTouchable
-      style={[styles.button, getButtonStyle(), style, animatedStyle]}
+    <TouchableOpacity
+      style={[
+        styles.button,
+        getButtonStyle(),
+        (disabled || loading) && styles.disabledButton,
+        style,
+      ]}
+      onPress={onPress}
+      disabled={disabled || loading}
       activeOpacity={0.8}
-      onPressIn={handlePressIn}
-      onPressOut={handlePressOut}
-      disabled={loading}
-      {...props}
     >
       {loading ? (
-        <ActivityIndicator 
-          color={variant === 'outline' ? '#9775fa' : '#fff'} 
-          size="small" 
-        />
+        <ActivityIndicator size="small" color="#FFFFFF" />
       ) : (
         <Text style={[getTextStyle(), textStyle]}>{title}</Text>
       )}
-    </AnimatedTouchable>
+    </TouchableOpacity>
   );
 }
 
 const styles = StyleSheet.create({
   button: {
-    height: 48,
-    borderRadius: 12,
+    height: 50,
+    borderRadius: 8,
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 16,
@@ -107,22 +89,19 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#9775fa',
   },
-  primaryText: {
+  disabledButton: {
+    opacity: 0.6,
+  },
+  buttonText: {
     color: '#FFFFFF',
     fontSize: 16,
-    fontWeight: '600',
-    fontFamily: 'SpaceGrotesk_600SemiBold',
+    fontWeight: '500',
+    fontFamily: 'Inter_500Medium',
   },
-  secondaryText: {
-    color: '#E2E8F0',
-    fontSize: 16,
-    fontWeight: '600',
-    fontFamily: 'SpaceGrotesk_600SemiBold',
-  },
-  outlineText: {
+  outlineButtonText: {
     color: '#9775fa',
     fontSize: 16,
-    fontWeight: '600',
-    fontFamily: 'SpaceGrotesk_600SemiBold',
+    fontWeight: '500',
+    fontFamily: 'Inter_500Medium',
   },
 });

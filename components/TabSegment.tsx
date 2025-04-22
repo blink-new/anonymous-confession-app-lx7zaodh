@@ -1,71 +1,55 @@
 
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
+import Animated, { useAnimatedStyle, withTiming } from 'react-native-reanimated';
 
 type Tab = {
   key: string;
-  title: string;
+  label: string;
 };
 
 type TabSegmentProps = {
   tabs: Tab[];
   activeTab: string;
-  onTabChange: (tabKey: string) => void;
+  onTabChange: (tab: string) => void;
 };
 
 export function TabSegment({ tabs, activeTab, onTabChange }: TabSegmentProps) {
-  const indicatorPosition = useSharedValue(0);
-  const indicatorWidth = useSharedValue(0);
-
-  const handleTabPress = (tabKey: string, index: number) => {
-    // Calculate the position and width for the indicator
-    const tabWidth = 100 / tabs.length;
-    const position = index * tabWidth;
-    
-    indicatorPosition.value = withTiming(position, { duration: 200 });
-    indicatorWidth.value = withTiming(tabWidth, { duration: 200 });
-    
-    onTabChange(tabKey);
-  };
-
-  // Set initial indicator position and width
-  React.useEffect(() => {
-    const activeIndex = tabs.findIndex(tab => tab.key === activeTab);
-    if (activeIndex !== -1) {
-      const tabWidth = 100 / tabs.length;
-      indicatorPosition.value = activeIndex * tabWidth;
-      indicatorWidth.value = tabWidth;
-    }
-  }, []);
-
+  const activeIndex = tabs.findIndex(tab => tab.key === activeTab);
+  
   const indicatorStyle = useAnimatedStyle(() => {
     return {
-      left: `${indicatorPosition.value}%`,
-      width: `${indicatorWidth.value}%`,
+      transform: [
+        { 
+          translateX: withTiming(activeIndex * (100 / tabs.length) + '%', { 
+            duration: 250 
+          }) 
+        }
+      ],
+      width: `${100 / tabs.length}%`,
     };
   });
 
   return (
     <View style={styles.container}>
       <View style={styles.tabsContainer}>
-        {tabs.map((tab, index) => (
+        {tabs.map((tab) => (
           <TouchableOpacity
             key={tab.key}
             style={[
               styles.tab,
-              { width: `${100 / tabs.length}%` },
+              { width: `${100 / tabs.length}%` }
             ]}
-            onPress={() => handleTabPress(tab.key, index)}
+            onPress={() => onTabChange(tab.key)}
             activeOpacity={0.7}
           >
             <Text
               style={[
                 styles.tabText,
-                activeTab === tab.key && styles.activeTabText,
+                activeTab === tab.key && styles.activeTabText
               ]}
             >
-              {tab.title}
+              {tab.label}
             </Text>
           </TouchableOpacity>
         ))}
@@ -78,36 +62,40 @@ export function TabSegment({ tabs, activeTab, onTabChange }: TabSegmentProps) {
 
 const styles = StyleSheet.create({
   container: {
-    position: 'relative',
+    backgroundColor: '#1A1A2E',
+    borderRadius: 12,
+    marginHorizontal: 16,
     marginBottom: 16,
+    position: 'relative',
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: '#2D2D3F',
   },
   tabsContainer: {
     flexDirection: 'row',
-    borderRadius: 12,
-    backgroundColor: '#1E1E2E',
-    borderWidth: 1,
-    borderColor: '#2D2D3F',
-    overflow: 'hidden',
+    height: 48,
   },
   tab: {
-    paddingVertical: 12,
-    alignItems: 'center',
     justifyContent: 'center',
+    alignItems: 'center',
   },
   tabText: {
     fontSize: 14,
+    fontWeight: '500',
     color: '#94A3B8',
-    fontFamily: 'SpaceGrotesk_500Medium',
+    fontFamily: 'Inter_500Medium',
   },
   activeTabText: {
     color: '#E2E8F0',
-    fontFamily: 'SpaceGrotesk_600SemiBold',
+    fontWeight: '600',
+    fontFamily: 'Inter_600SemiBold',
   },
   indicator: {
     position: 'absolute',
     bottom: 0,
     height: 3,
     backgroundColor: '#9775fa',
-    borderRadius: 1.5,
+    borderTopLeftRadius: 3,
+    borderTopRightRadius: 3,
   },
 });

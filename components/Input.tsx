@@ -1,19 +1,19 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { 
   View, 
   TextInput, 
   Text, 
-  StyleSheet, 
-  TextInputProps,
+  StyleSheet,
+  StyleProp,
   ViewStyle,
+  TextInputProps
 } from 'react-native';
-import Animated, { FadeIn } from 'react-native-reanimated';
 
 interface InputProps extends TextInputProps {
   label?: string;
   error?: string;
-  containerStyle?: ViewStyle;
+  containerStyle?: StyleProp<ViewStyle>;
 }
 
 export function Input({ 
@@ -22,8 +22,6 @@ export function Input({
   containerStyle, 
   ...props 
 }: InputProps) {
-  const [isFocused, setIsFocused] = useState(false);
-
   return (
     <View style={[styles.container, containerStyle]}>
       {label && <Text style={styles.label}>{label}</Text>}
@@ -31,23 +29,14 @@ export function Input({
       <TextInput
         style={[
           styles.input,
-          isFocused && styles.inputFocused,
           error && styles.inputError,
+          props.multiline && styles.multilineInput
         ]}
         placeholderTextColor="#94A3B8"
-        onFocus={() => setIsFocused(true)}
-        onBlur={() => setIsFocused(false)}
         {...props}
       />
       
-      {error && (
-        <Animated.Text 
-          style={styles.errorText}
-          entering={FadeIn.duration(300)}
-        >
-          {error}
-        </Animated.Text>
-      )}
+      {error && <Text style={styles.errorText}>{error}</Text>}
     </View>
   );
 }
@@ -63,24 +52,24 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter_500Medium',
   },
   input: {
-    height: 48,
+    backgroundColor: '#1E1E2E',
     borderWidth: 1,
     borderColor: '#2D2D3F',
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    fontSize: 16,
+    borderRadius: 8,
+    padding: 12,
     color: '#E2E8F0',
-    backgroundColor: '#1E1E2E',
+    fontSize: 16,
     fontFamily: 'Inter_400Regular',
   },
-  inputFocused: {
-    borderColor: '#9775fa',
+  multilineInput: {
+    minHeight: 100,
+    textAlignVertical: 'top',
   },
   inputError: {
-    borderColor: '#ef4444',
+    borderColor: '#E53E3E',
   },
   errorText: {
-    color: '#ef4444',
+    color: '#E53E3E',
     fontSize: 12,
     marginTop: 4,
     fontFamily: 'Inter_400Regular',

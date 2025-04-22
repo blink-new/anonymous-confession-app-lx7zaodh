@@ -1,63 +1,75 @@
+
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import Animated, { FadeInDown } from 'react-native-reanimated';
 
-interface RuleSectionProps {
+type RuleSectionProps = {
   title: string;
   rules: string[];
-}
+  icon?: React.ReactNode;
+};
 
-export function RuleSection({ title, rules }: RuleSectionProps) {
+export function RuleSection({ title, rules, icon }: RuleSectionProps) {
   return (
-    <Animated.View 
-      style={styles.section}
-      entering={FadeInDown.duration(400).delay(200)}
-    >
-      <Text style={styles.sectionTitle}>{title}</Text>
-      {rules.map((rule, index) => (
-        <View key={index} style={styles.ruleContainer}>
-          <Text style={styles.bulletPoint}>•</Text>
-          <Text style={styles.ruleText}>{rule}</Text>
-        </View>
-      ))}
-    </Animated.View>
+    <View style={styles.container}>
+      <View style={styles.header}>
+        {icon && <View style={styles.iconContainer}>{icon}</View>}
+        <Text style={styles.title}>{title}</Text>
+      </View>
+      
+      <View style={styles.rulesList}>
+        {rules.map((rule, index) => (
+          <View key={index} style={styles.ruleItem}>
+            <View style={styles.bullet} />
+            <Text style={styles.ruleText}>{rule}</Text>
+          </View>
+        ))}
+      </View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  section: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 10,
+  container: {
+    backgroundColor: '#1E1E2E',
+    borderRadius: 12,
     padding: 16,
-    marginHorizontal: 16,
-    marginBottom: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 1,
-    elevation: 1,
+    borderWidth: 1,
+    borderColor: '#2D2D3F',
   },
-  sectionTitle: {
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  iconContainer: {
+    marginRight: 8,
+  },
+  title: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#1C1C1E',
-    marginBottom: 12,
+    color: '#E2E8F0',
+    fontFamily: 'SpaceGrotesk_600SemiBold',
   },
-  ruleContainer: {
+  rulesList: {
+    gap: 12,
+  },
+  ruleItem: {
     flexDirection: 'row',
-    marginBottom: 8,
-    paddingRight: 8,
+    alignItems: 'flex-start',
   },
-  bulletPoint: {
-    fontSize: 14,
-    marginRight: 8,
-    color: '#007AFF',
-    top: 2,
+  bullet: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: '#9775fa',
+    marginTop: 7,
+    marginRight: 10,
   },
   ruleText: {
     fontSize: 14,
-    color: '#3C3C43',
-    lineHeight: 20,
+    color: '#E2E8F0',
     flex: 1,
+    lineHeight: 20,
+    fontFamily: 'Inter_400Regular',
   },
 });
