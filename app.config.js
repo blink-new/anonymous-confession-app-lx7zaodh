@@ -1,0 +1,40 @@
+
+module.exports = {
+  name: 'Anonymous Confessions',
+  slug: 'anonymous-confessions',
+  version: '1.0.0',
+  orientation: 'portrait',
+  icon: './assets/images/icon.png',
+  scheme: 'myapp',
+  userInterfaceStyle: 'dark',
+  splash: {
+    image: './assets/images/splash-icon.png',
+    resizeMode: 'contain',
+    backgroundColor: '#121220'
+  },
+  assetBundlePatterns: [
+    "**/*"
+  ],
+  ios: {
+    supportsTablet: true
+  },
+  android: {
+    adaptiveIcon: {
+      foregroundImage: './assets/images/adaptive-icon.png',
+      backgroundColor: '#121220'
+    }
+  },
+  web: {
+    bundler: 'metro',
+    favicon: './assets/images/favicon.png'
+  },
+  plugins: [
+    'expo-router',
+    [
+      'expo-location',
+      {
+        "locationAlwaysAndWhenInUsePermission": "Allow Anonymous Confessions to use your location."
+      }
+    ]
+  ]
+};
